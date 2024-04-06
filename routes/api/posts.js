@@ -23,11 +23,15 @@ router.post('/',[
     }
 
     try{
+        const { text, title, cover, description } = req.body;
 
         const user = await User.findById(req.user.id).select('-password');
 
         const newPost = new Post({
-            text: req.body.text,
+            title: title,
+            text: text,
+            cover: cover,
+            description: description,
             name: user.name,
             avatar: user.avatar,
             user: req.user.id
@@ -47,7 +51,7 @@ router.post('/',[
 // @access Private
 router.get('/', auth ,async (req,res) => {
     try{
-        const posts = await Post.find().sort({ date: -1 });
+        const posts = await Post.find().select('name title description cover avatar').sort({ date: -1 });
         res.json(posts);
 
     }catch (err){
